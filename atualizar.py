@@ -10,7 +10,7 @@ def conecta():
     except Error as er:
         print('Erro durante a conexão.')
 def listar(sql):
-        sql_mostra_cliente = 'SELECT * FROM inventario;'
+        sql_mostra_cliente = 'SELECT * FROM produtos;'
         con = conecta()
         cursor = con.cursor()  # Objeto que permite executar SQL
         cursor.execute(sql)
@@ -92,7 +92,7 @@ class  Tela:
         if self.nomeproduto == "" or self.estoque == "" or self.precocusto == "" or self.precovenda == "":
             tk.messagebox.showinfo("Preencha todos os campos")
         else:
-            sql =   ("INSERT INTO inventario (nome,estoque,preco_custo,preco_venda,fornecedor,total_custo,total_preco_venda,lucro,fornecedor_numero) VALUES(?,?,?,?,?,?,?,?,?)")
+            sql =   ("INSERT INTO produtos (nome,estoque,preco_custo,preco_venda,fornecedor,total_custo,total_preco_venda,lucro,fornecedor_numero) VALUES(?,?,?,?,?,?,?,?,?)")
             con = conecta()
             cursor = con.cursor()
             cursor.execute(sql,(self.nomeproduto,self.estoque,self.precocusto,self.precovenda,self.nomefornecedor,self.totalcusto,self.totalvenda,self.lucro,self.telefornecedor))
@@ -101,7 +101,7 @@ class  Tela:
             tk.messagebox.showinfo("Aviso",message="Cadastro do Produto Realizado")
 
     def procurar_id(self):
-        sql = "SELECT * FROM inventario WHERE id = ?"
+        sql = "SELECT * FROM produtos WHERE id = ?"
         con = conecta()
         cursor = con.cursor()
         resultado = cursor.execute(sql,(self.id_entry.get()))
@@ -140,7 +140,7 @@ class  Tela:
         self.u4 = self.preco_venda_entry.get()
         self.u5 = self.nome_fornecedor_entry.get()
         self.u6 = self.telefone_fornecedor_entry.get()
-        sql = "UPDATE inventario SET nome = ?,estoque=?,preco_custo=?,preco_venda=?,fornecedor=?,fornecedor_numero=? WHERE ID = ?"
+        sql = "UPDATE produtos SET nome = ?,estoque=?,preco_custo=?,preco_venda=?,fornecedor=?,fornecedor_numero=? WHERE ID = ?"
         con = conecta()
         cursor = con.cursor()
         cursor.execute(sql,(self.u1,self.u2,self.u3,self.u4,self.u5,self.u6,self.id_entry.get()))

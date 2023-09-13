@@ -80,7 +80,7 @@ class  Tela:
         if self.nomeproduto == "" or self.estoque == "" or self.precocusto == "" or self.precovenda == "":
             tk.messagebox.showinfo("Preencha todos os campos")
         else:
-            sql =   ("INSERT INTO inventario(nome,estoque,preco_custo,preco_venda,fornecedor,total_custo,total_preco_venda,lucro,fornecedor_numero) VALUES(?,?,?,?,?,?,?,?,?)")
+            sql =   ("INSERT INTO produtos(nome,estoque,preco_custo,preco_venda,fornecedor,total_custo,total_preco_venda,lucro,fornecedor_numero) VALUES(?,?,?,?,?,?,?,?,?)")
             con = conecta()
             cursor = con.cursor()
             cursor.execute(sql,(self.nomeproduto,self.estoque,self.precocusto,self.precovenda,self.nomefornecedor,self.totalcusto,self.totalvenda,self.lucro,self.telefornecedor))
