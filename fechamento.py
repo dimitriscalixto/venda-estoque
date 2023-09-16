@@ -6,6 +6,10 @@ from sqlite3 import Error
 import datetime
 from ttkthemes import ThemedTk
 import math
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
 data = datetime.datetime.now().date()
 horario = datetime.datetime.now().time()
 
@@ -61,6 +65,7 @@ class Main:
         self.total_lbl = tk.Label(self.direita, text='Total Preço: ', font=("arial 25 bold"), bg='lightblue')
         self.total_lbl.place(x=0, y=450)
 
+
     def procurar_id(self):
 
         sql = "SELECT * FROM produtos WHERE id = ?"
@@ -86,9 +91,9 @@ class Main:
         self.carrinho_btn = tk.Button(self.esquerda,text="Carrinho",width=15,height=1,bg='steelblue',fg='white',command=self.carrinho)
         self.carrinho_btn.place(x=290,y=415)
 
-
-        self.recibo_btn = tk.Button(self.esquerda,text='Gerar Recibo',width=15,height=1,bg='steelblue',fg='white',command=self.venda)
-        self.recibo_btn.place(x=280,y=620)
+        self.fechamento_btn = tk.Button(self.direita, text='Finalizar Compra', font=('arial 12 bold'),
+                                        bg='steelblue',fg='white',command=self.venda)
+        self.fechamento_btn.place(x=10, y=620)
 
         con.commit()
         con.close()
@@ -111,7 +116,7 @@ class Main:
 
             self.quantidadetemp = tk.Label(self.direita, text=f'{produto_quantidade[i]}', font=('arial 12 bold'), bg='lightblue')
             self.quantidadetemp.place(x=300, y=self.y_index)
-            lista_labels.append(self.quantidade)
+            lista_labels.append(self.quantidadetemp)
 
             self.precotemp = tk.Label(self.direita, text=f'{produto_preco[i]}', font=('arial 12 bold'),bg='lightblue')
             self.precotemp.place(x=380, y=self.y_index)
@@ -120,6 +125,17 @@ class Main:
             self.y_index += 40
 
             self.total_lbl.configure(text=f'Total: {sum(produto_preco)} R$')
+
+    def limpar_labels(self):
+        for label in lista_labels:
+            label.destroy()
+        produtos_lista.clear()
+        produto_preco.clear()
+        produto_quantidade.clear()
+        produtos_id.clear()
+
+
+
     def venda(self):
             sql = "INSERT INTO venda(id,valor_total,data) VALUES (?,?,?)"
             con = conecta()
@@ -127,7 +143,34 @@ class Main:
             cursor.execute(sql, (None, sum(produto_preco), str(data)))
             con.commit()
             con.close()
+
             self.venda_id = cursor.lastrowid
+            doc = SimpleDocTemplate("nota_fiscal.pdf", pagesize=letter)
+            story = []
+
+            styles = getSampleStyleSheet()
+            styles.add(ParagraphStyle(name="Center", alignment=1))
+
+            # Título
+            title = "Nota Fiscal"
+            story.append(Paragraph(title, styles["Title"]))
+            story.append(Spacer(1, 12))
+            item_data = []
+            for i in range(len(produtos_lista)):
+                descricao = produtos_lista[i]
+                quantidade = produto_quantidade[i]
+                preco_unitario = produto_preco[i]
+                subtotal = quantidade * preco_unitario
+                item_info = f"{descricao}: {quantidade} x R${preco_unitario:.2f} = R${subtotal:.2f}"
+                item_data.append(item_info)
+            story.append(Paragraph("Itens da Compra:", styles["Heading2"]))
+            for item_info in item_data:
+                story.append(Paragraph(item_info, styles["Normal"]))
+            story.append(Spacer(1, 12))
+            total_info = f"Total da Compra: R${sum(produto_preco):.2f}"
+            story.append(Paragraph(total_info, styles["Heading2"]))
+            doc.build(story)
+
             for i in range(len(produtos_lista)):
                 self.produto_nome = produtos_lista[i]
                 self.produto_preco = produto_preco[i]
@@ -144,7 +187,15 @@ class Main:
                 cursor.execute('''
                         UPDATE produtos
                         SET estoque = estoque - ?
-                        WHERE id = ?
-                    ''', (self.produto_quantidade, self.produto_id))
+                        WHERE id = ?''',(self.produto_quantidade, self.produto_id))
                 con.commit()
                 con.close()
+            Main.limpar_labels(self)
+            self.total_lbl.configure(text=f'')
+            self.quantidade_entry.delete(0,tk.END)
+            self.id_entry.delete(0,tk.END)
+
+
+
+
+
