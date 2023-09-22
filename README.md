@@ -60,10 +60,6 @@ python main.py
 
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues, propor melhorias ou enviar pull requests para este projeto.
 
-## Licença
-
-Este projeto está licenciado sob a [Licença MIT](LICENSE).
-
 ---
 
 
