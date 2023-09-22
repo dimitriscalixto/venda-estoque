@@ -1,5 +1,3 @@
-Claro, aqui está um exemplo de um arquivo `readme.md` para o seu projeto de sistema de estoque/venda que utiliza a biblioteca Tkinter e SQLite3:
-
 # Sistema de Estoque/Venda com Tkinter e SQLite
 
 Este é um projeto de sistema de estoque/venda desenvolvido em Python que utiliza as bibliotecas Tkinter para a interface gráfica e SQLite3 como banco de dados para gerenciar o estoque e as vendas de produtos.
