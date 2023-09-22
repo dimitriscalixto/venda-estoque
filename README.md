@@ -67,4 +67,5 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir issues, propor m
 Este projeto está licenciado sob a [Licença MIT](LICENSE).
 
 ---
-![Texto alternativo](/home/dimitriscalixto/Área de Trabalho/trabalho-tesi-final/img/Captura de tela de 2023-09-22 17-17-35.png)
+
+
