@@ -24,7 +24,7 @@ def conecta():
         return con
     except Error as er:
         print('Erro durante a conexão.')
-class Main:
+class Fechamento:
     def __init__(self,master):
         self.janela = master
         self.top_level = tk.Toplevel(self.janela)
@@ -67,36 +67,37 @@ class Main:
 
 
     def procurar_id(self):
+        try:
+            sql = "SELECT * FROM produtos WHERE id = ?"
+            con = conecta()
+            cursor = con.cursor()
+            resultado = cursor.execute(sql,(self.id_entry.get(),))
+            for r in resultado:
+                self.get_id = r[0]
+                self.get_nome = r[1]
+                self.get_preco = r[4]
+                self.get_estoque = r[2]
 
-        sql = "SELECT * FROM produtos WHERE id = ?"
-        con = conecta()
-        cursor = con.cursor()
-        resultado = cursor.execute(sql,(self.id_entry.get()))
+            self.nome_produto.configure(text=f'Nome Produto :{self.get_nome}')
+            self.preco_produto.configure(text=f'Preço: {self.get_preco} R$')
 
-        for r in resultado:
-            self.get_id = r[0]
-            self.get_nome = r[1]
-            self.get_preco = r[4]
-            self.get_estoque = r[2]
+            self.quantidade = tk.Label(self.esquerda, text="Quantidade: ", font=('arial 18 bold'),bg='white')
+            self.quantidade.place(x=0,y=370)
 
-        self.nome_produto.configure(text=f'Nome Produto :{self.get_nome}')
-        self.preco_produto.configure(text=f'Preço: {self.get_preco} R$')
+            self.quantidade_entry = tk.Entry(self.esquerda, width=25,font=('arial 12 bold'),bg='white')
+            self.quantidade_entry.place(x=190,y=375)
 
-        self.quantidade = tk.Label(self.esquerda, text="Quantidade: ", font=('arial 18 bold'),bg='white')
-        self.quantidade.place(x=0,y=370)
+            self.carrinho_btn = tk.Button(self.esquerda,text="Carrinho",width=15,height=1,bg='steelblue',fg='white',command=self.carrinho)
+            self.carrinho_btn.place(x=290,y=415)
 
-        self.quantidade_entry = tk.Entry(self.esquerda, width=25,font=('arial 12 bold'),bg='white')
-        self.quantidade_entry.place(x=190,y=375)
+            self.fechamento_btn = tk.Button(self.direita, text='Finalizar Compra', font=('arial 12 bold'),
+                                            bg='steelblue',fg='white',command=self.venda)
+            self.fechamento_btn.place(x=10, y=620)
 
-        self.carrinho_btn = tk.Button(self.esquerda,text="Carrinho",width=15,height=1,bg='steelblue',fg='white',command=self.carrinho)
-        self.carrinho_btn.place(x=290,y=415)
-
-        self.fechamento_btn = tk.Button(self.direita, text='Finalizar Compra', font=('arial 12 bold'),
-                                        bg='steelblue',fg='white',command=self.venda)
-        self.fechamento_btn.place(x=10, y=620)
-
-        con.commit()
-        con.close()
+            con.commit()
+            con.close()
+        except:
+            messagebox.showerror('Aviso','ID não consta no banco')
     def carrinho(self):
         self.quantidade_valor = int(self.quantidade_entry.get())
         if self.quantidade_valor > int(self.get_estoque):
@@ -190,12 +191,9 @@ class Main:
                         WHERE id = ?''',(self.produto_quantidade, self.produto_id))
                 con.commit()
                 con.close()
-            Main.limpar_labels(self)
+            Fechamento.limpar_labels(self)
             self.total_lbl.configure(text=f'')
             self.quantidade_entry.delete(0,tk.END)
             self.id_entry.delete(0,tk.END)
-
-
-
-
-
+            messagebox.showinfo("Aviso",'Compra realizada com sucesso, gerando nota fiscal...')
+            self.top_level.destroy()

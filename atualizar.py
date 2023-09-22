@@ -104,7 +104,7 @@ class  Tela:
         sql = "SELECT * FROM produtos WHERE id = ?"
         con = conecta()
         cursor = con.cursor()
-        resultado = cursor.execute(sql,(self.id_entry.get()))
+        resultado = cursor.execute(sql,(self.id_entry.get(),))
 
         for r in resultado:
             self.n1 = r[1]
@@ -147,5 +147,6 @@ class  Tela:
         con.commit()
         con.close()
         tk.messagebox.showinfo("Aviso", message="Produto atualizado com sucesso")
+        self.top_level.destroy()
 
 

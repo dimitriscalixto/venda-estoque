@@ -2,44 +2,52 @@ import tkinter as tk
 from tkinter import ttk
 import sqlite3
 
+class Listar:
+    def __init__(self, master):
+        self.janela = master
+        self.top_level = tk.Toplevel(self.janela)
+        self.top_level.title("Lista de Produtos")
+        self.conexao = sqlite3.connect('/home/dimitriscalixto/Área de Trabalho/trabalho-tesi-final/database/banco')
+        self.cursor = self.conexao.cursor()
 
-def listar_produtos():
-    # Conectar ao banco de dados
-    conexao = sqlite3.connect('/home/dimitriscalixto/Área de Trabalho/trabalho-tesi-final/database/banco')
-    cursor = conexao.cursor()
+        self.criar_tabela()
+        self.criar_botao_deletar()
 
-    # Executar a consulta SQL para obter os produtos
-    cursor.execute("SELECT id, nome, estoque, fornecedor, fornecedor_numero FROM produtos")
-    produtos = cursor.fetchall()
+    def criar_tabela(self):
+        self.tabela = ttk.Treeview(self.top_level, columns=('ID', 'Nome', 'Estoque', 'Fornecedor', 'Numero Fornecedor'))
+        self.tabela['show'] = 'headings'
 
-    # Fechar a conexão com o banco de dados
-    conexao.close()
+        self.tabela.heading('ID', text='ID')
+        self.tabela.heading('Nome', text='Nome')
+        self.tabela.heading('Estoque', text='Estoque')
+        self.tabela.heading('Fornecedor', text='Fornecedor')
+        self.tabela.heading('Numero Fornecedor', text='Numero Fornecedor')
 
-    # Criar a janela principal
-    janela = tk.Tk()
-    janela.title("Lista de Produtos")
+        self.tabela.pack(padx=10, pady=10, fill='both', expand=True)
 
-    # Criar uma tabela para exibir os produtos com as colunas desejadas
-    tabela = ttk.Treeview(janela, columns=('ID', 'Nome', 'Estoque', 'Fornecedor', 'Numero Fornecedor'))
+        self.carregar_produtos()
 
-    # Configurar a Treeview para não mostrar o cabeçalho da primeira coluna
-    tabela['show'] = 'headings'
+    def carregar_produtos(self):
+        self.cursor.execute("SELECT id, nome, estoque, fornecedor, fornecedor_numero FROM produtos")
+        produtos = self.cursor.fetchall()
 
-    tabela.heading('ID', text='ID')
-    tabela.heading('Nome', text='Nome')
-    tabela.heading('Estoque', text='Estoque')
-    tabela.heading('Fornecedor', text='Fornecedor')
-    tabela.heading('Numero Fornecedor', text='Numero Fornecedor')
+        for produto in produtos:
+            self.tabela.insert('', 'end', values=produto)
 
-    # Adicionar os produtos à tabela
-    for produto in produtos:
-        tabela.insert('', 'end', values=produto)
+    def criar_botao_deletar(self):
+        self.botao_deletar = ttk.Button(self.top_level, text="Deletar", command=self.deletar_produto)
+        self.botao_deletar.pack(pady=10)
 
-    # Configurar a geometria da tabela
-    tabela.pack(padx=10, pady=10, fill='both', expand=True)
+    def deletar_produto(self):
+        selecionado = self.tabela.focus()
 
-    janela.mainloop()
+        if selecionado:
+            valores = self.tabela.item(selecionado, 'values')
+            produto_id = valores[0]
+
+            self.cursor.execute("DELETE FROM produtos WHERE id = ?", (produto_id,))
+            self.conexao.commit()
+            self.tabela.delete(selecionado)
 
 
-# Chamar a função para listar os produtos
-listar_produtos()
+

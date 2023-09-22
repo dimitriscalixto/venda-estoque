@@ -37,8 +37,6 @@ class  Tela:
         self.tel_fornecedor = ttk.Label(self.top_level, text="Telefone do Fornecedor:", font=('arial 10'))
         self.tel_fornecedor.place(x=15, y=320)
 
-        self.id = ttk.Label(self.top_level, text="ID:", font=('arial 10'))
-        self.id.place(x=15, y=370)
 
         self.nome_entry = ttk.Entry(self.top_level, width=20, font=('arial 10'))
         self.nome_entry.place(x=150,y=70)
@@ -57,9 +55,6 @@ class  Tela:
 
         self.telefone_fornecedor_entry = ttk.Entry(self.top_level, width=20, font=('arial 10'))
         self.telefone_fornecedor_entry.place(x=160, y=320)
-
-        self.id_entry = ttk.Entry(self.top_level, width=20, font=('arial 10'))
-        self.id_entry.place(x=35, y=370)
 
         self.btn_add = ttk.Button(self.top_level, width= 25, text="Cadastrar",command=self.get_items)
         self.btn_add.place(x=120, y=420)
@@ -87,5 +82,6 @@ class  Tela:
             con.commit()
             con.close()
             tk.messagebox.showinfo("Aviso",message="Cadastro do Produto Realizado")
+            self.top_level.destroy()
 
 
